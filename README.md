@@ -2,27 +2,81 @@
 
 Un sistema de termostato inteligente basado en ESP8266 que obtiene datos meteorológicos en tiempo real y toma decisiones automáticas de control de temperatura.
 
-## Características
+## 🏗️ Arquitectura Modular
+
+El proyecto ha sido refactorizado siguiendo principios de **Clean Code** y **Separación de Responsabilidades**:
+
+### Estructura del Proyecto
+
+```
+termostato/
+├── termostato_refactorizado.ino    # Archivo principal (versión limpia)
+├── termostato.ino                  # Código original (legacy)
+├── config.h                        # Configuración centralizada
+├── ThermostatState.h               # Definición de estados
+├── JsonParser.h/.cpp               # Manejo de JSON
+├── HttpClient.h/.cpp               # Operaciones HTTP/HTTPS
+├── TemperatureController.h/.cpp    # Lógica de control de temperatura
+├── ThermostatStateMachine.h/.cpp   # Máquina de estados principal
+├── README.md                       # Documentación
+├── LICENSE                         # Licencia MIT
+└── .gitignore                      # Archivos a ignorar
+```
+
+### Módulos del Sistema
+
+#### 🔧 **Configuración (`config.h`)**
+- Todas las constantes y configuraciones centralizadas
+- Credenciales WiFi y API
+- Umbrales de temperatura
+- Configuración de hardware
+
+#### 🔄 **Estados (`ThermostatState.h`)**
+- Enumeración clara de estados del sistema
+- Nombres descriptivos en lugar de códigos
+
+#### 📊 **Parser JSON (`JsonParser.h/.cpp`)**
+- Manejo robusto de respuestas JSON
+- Extracción de datos meteorológicos
+- Validación de datos
+
+#### 🌐 **Cliente HTTP (`HttpClient.h/.cpp`)**
+- Operaciones HTTP/HTTPS seguras
+- Manejo de autenticación
+- Construcción de URLs dinámicas
+
+#### 🌡️ **Control de Temperatura (`TemperatureController.h/.cpp`)**
+- Evaluación de rangos de temperatura
+- Lógica de control automático
+- Acciones específicas por rango
+
+#### 🎛️ **Máquina de Estados (`ThermostatStateMachine.h/.cpp`)**
+- Coordinación de todos los módulos
+- Transiciones de estado claras
+- Manejo de errores y reintentos
+
+## ✨ Características
 
 - **Control de temperatura automático**: Obtiene datos meteorológicos de Meteomatics API
-- **Máquina de estados**: Sistema robusto con estados bien definidos
+- **Máquina de estados robusta**: Sistema con estados bien definidos y transiciones claras
 - **Conexión WiFi**: Configuración automática de red WiFi
 - **Indicadores LED**: Feedback visual del estado del sistema
 - **Geolocalización**: Configurado para Buenos Aires, Argentina (-34.396944, -58.694444)
+- **Código limpio**: Arquitectura modular siguiendo principios de Clean Code
 
-## Hardware Requerido
+## 🛠️ Hardware Requerido
 
 - ESP8266 (NodeMCU, Wemos D1 Mini, etc.)
 - LEDs para indicadores (pines 4 y 5)
 - Fuente de alimentación estable
 
-## Configuración
+## ⚙️ Configuración
 
 ### Credenciales WiFi
-Edita las siguientes líneas en el código:
+Edita las siguientes líneas en `config.h`:
 ```cpp
-#define STASSID "tu_red_wifi"
-#define STAPSK "tu_password_wifi"
+#define WIFI_SSID "tu_red_wifi"
+#define WIFI_PASSWORD "tu_password_wifi"
 ```
 
 ### API Meteomatics
@@ -31,23 +85,23 @@ El proyecto utiliza la API de Meteomatics para obtener datos meteorológicos. Ne
 - Credenciales de acceso (codificadas en Base64)
 
 ### Ubicación
-El sistema está configurado para Buenos Aires. Para cambiar la ubicación, modifica las coordenadas:
+El sistema está configurado para Buenos Aires. Para cambiar la ubicación, modifica las coordenadas en `config.h`:
 ```cpp
-// Coordenadas actuales: Buenos Aires
-// -34.396944,-58.694444
+#define LOCATION_LATITUDE "-34.396944"
+#define LOCATION_LONGITUDE "-58.694444"
 ```
 
-## Estados del Sistema
+## 🔄 Estados del Sistema
 
 1. **IDLE**: Estado de espera inicial
-2. **INITIALIZE**: Inicialización del sistema
-3. **GET_TOKEN**: Obtención del token de autenticación
-4. **GET_CURRENT_TIME**: Obtención de la hora actual
-5. **GET_TEMPERATURE**: Obtención de datos de temperatura
-6. **TAKE_DECISION**: Evaluación y toma de decisiones
-7. **SPENDING_TIME**: Tiempo de espera entre ciclos
+2. **INITIALIZING**: Inicialización del sistema
+3. **GETTING_AUTH_TOKEN**: Obtención del token de autenticación
+4. **GETTING_CURRENT_TIME**: Obtención de la hora actual
+5. **GETTING_TEMPERATURE**: Obtención de datos de temperatura
+6. **EVALUATING_DECISION**: Evaluación y toma de decisiones
+7. **WAITING**: Tiempo de espera entre ciclos
 
-## Funcionalidades
+## 🌡️ Funcionalidades
 
 ### Obtención de Datos Meteorológicos
 - Temperatura actual en grados Celsius
@@ -56,15 +110,17 @@ El sistema está configurado para Buenos Aires. Para cambiar la ubicación, modi
 
 ### Lógica de Control
 El sistema evalúa la temperatura en diferentes rangos:
-- > 16°C: Rango alto
-- 10-16°C: Rango medio
-- 5-10°C: Rango bajo
-- < 5°C: Rango crítico
+- **CRITICAL_LOW** (< 5°C): Activa calefacción de emergencia
+- **LOW** (5-10°C): Activa sistema de calefacción
+- **MEDIUM** (10-16°C): Mantiene configuración actual
+- **HIGH** (> 16°C): Activa sistema de refrigeración
 
 ### Indicadores LED
 - LEDs en pines 4 y 5 proporcionan feedback visual del estado del sistema
+- Parpadeo durante operaciones
+- Indicación de estado de conexión
 
-## Instalación
+## 📦 Instalación
 
 1. Instala el IDE de Arduino
 2. Agrega el soporte para ESP8266
@@ -74,19 +130,10 @@ El sistema evalúa la temperatura en diferentes rangos:
    - Arduino_JSON
    - WiFiClientSecureBearSSL
 
-4. Configura las credenciales WiFi y API
-5. Compila y sube el código al ESP8266
+4. Configura las credenciales WiFi y API en `config.h`
+5. Compila y sube `termostato_refactorizado.ino` al ESP8266
 
-## Estructura del Proyecto
-
-```
-termostato/
-├── termostato.ino    # Código principal
-├── README.md         # Documentación
-└── .gitignore        # Archivos a ignorar
-```
-
-## Dependencias
+## 🔧 Dependencias
 
 - ESP8266WiFi
 - ESP8266WiFiMulti
@@ -95,14 +142,78 @@ termostato/
 - Arduino_JSON
 - WiFiClientSecureBearSSL
 
-## Licencia
+## 🧹 Principios de Clean Code Aplicados
+
+### ✅ **Separación de Responsabilidades**
+- Cada clase tiene una responsabilidad específica
+- Configuración separada de lógica de negocio
+
+### ✅ **Nombres Descriptivos**
+- `ThermostatStateMachine` en lugar de `stateMachine`
+- `GETTING_AUTH_TOKEN` en lugar de `_GET_TOKEN_`
+- `evaluateTemperature` en lugar de `evaluateTemperature`
+
+### ✅ **Funciones Pequeñas y Enfocadas**
+- Cada función hace una sola cosa
+- Métodos privados para lógica interna
+- Funciones estáticas para utilidades
+
+### ✅ **Configuración Centralizada**
+- Todas las constantes en `config.h`
+- Fácil modificación de parámetros
+- Sin valores hardcodeados
+
+### ✅ **Manejo de Errores Mejorado**
+- Validación de respuestas JSON
+- Reintentos automáticos
+- Logging detallado
+
+### ✅ **Código Reutilizable**
+- Clases modulares
+- Métodos estáticos para utilidades
+- Interfaces claras entre módulos
+
+## 📈 Mejoras Implementadas
+
+1. **Eliminación de variables globales**: Datos encapsulados en clases
+2. **Manejo de errores robusto**: Validación y reintentos automáticos
+3. **Logging mejorado**: Mensajes descriptivos y estructurados
+4. **Configuración flexible**: Fácil modificación de parámetros
+5. **Código mantenible**: Estructura clara y documentada
+
+## 🚀 Uso
+
+### Versión Refactorizada (Recomendada)
+```cpp
+// termostato_refactorizado.ino
+#include "config.h"
+#include "ThermostatStateMachine.h"
+
+ThermostatStateMachine thermostat;
+
+void setup() {
+    thermostat.initialize();
+}
+
+void loop() {
+    thermostat.run();
+}
+```
+
+### Versión Original (Legacy)
+```cpp
+// termostato.ino - Código original
+// Mantenido para compatibilidad
+```
+
+## 📄 Licencia
 
 Este proyecto está bajo licencia MIT. Ver el archivo LICENSE para más detalles.
 
-## Contribuciones
+## 🤝 Contribuciones
 
 Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para sugerencias y mejoras.
 
-## Autor
+## 👨‍💻 Autor
 
-Desarrollado para control de temperatura inteligente con ESP8266. 
+Desarrollado para control de temperatura inteligente con ESP8266, aplicando principios de Clean Code y arquitectura modular. 
