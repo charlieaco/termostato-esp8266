@@ -1,0 +1,42 @@
+version: 2
+updates:
+  # Configurar actualizaciones de GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "charlie"
+    assignees:
+      - "charlie"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+
+  # Configurar actualizaciones de Arduino CLI
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "1"
+      time: "10:00"
+    target-branch: "develop"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "charlie"
+    assignees:
+      - "charlie"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "arduino"
+      - "automated" 

@@ -1,0 +1,100 @@
+{
+  "test_configuration": {
+    "framework": {
+      "name": "TestFramework",
+      "version": "1.0.0",
+      "description": "Framework de testing personalizado para Arduino/ESP8266"
+    },
+    "execution": {
+      "timeout_seconds": 30,
+      "serial_baud_rate": 115200,
+      "auto_run": true
+    },
+    "reporting": {
+      "show_detailed_errors": true,
+      "show_statistics": true,
+      "show_progress": true
+    }
+  },
+  "test_suites": {
+    "domain_layer": {
+      "enabled": true,
+      "tests": [
+        "TemperatureControllerTest"
+      ],
+      "description": "Tests de la capa de dominio (lógica de negocio)"
+    },
+    "application_layer": {
+      "enabled": true,
+      "tests": [
+        "GetTemperatureUseCaseTest",
+        "ControlTemperatureUseCaseTest"
+      ],
+      "description": "Tests de la capa de aplicación (casos de uso)"
+    },
+    "infrastructure_layer": {
+      "enabled": true,
+      "tests": [
+        "JsonParserTest"
+      ],
+      "description": "Tests de la capa de infraestructura (adaptadores)"
+    },
+    "interfaces_layer": {
+      "enabled": false,
+      "tests": [],
+      "description": "Tests de la capa de interfaces (controladores) - Pendiente"
+    }
+  },
+  "mocks": {
+    "MockTemperatureRepository": {
+      "default_temperature": 20.5,
+      "default_token": "mock_token_123",
+      "should_succeed_by_default": true
+    },
+    "MockTimeRepository": {
+      "default_time": "2024-01-15T10:30:00Z",
+      "should_succeed_by_default": true
+    },
+    "MockHardwareRepository": {
+      "track_calls": true,
+      "auto_reset_counters": true
+    }
+  },
+  "test_data": {
+    "temperature_ranges": {
+      "critical_low": [-10.0, 4.9],
+      "low": [5.0, 9.9],
+      "medium": [10.0, 15.9],
+      "high": [16.0, 30.0]
+    },
+    "json_samples": {
+      "valid_temperature_response": {
+        "data": [
+          {
+            "coordinates": [
+              {
+                "dates": [
+                  {
+                    "value": 22.5
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "invalid_json": "{\"data\":[{\"coordinates\":[{\"dates\":[{\"value\":"
+    }
+  },
+  "hardware": {
+    "board": "esp8266:esp8266:nodemcuv2",
+    "port": "/dev/ttyUSB0",
+    "baud_rate": 115200
+  },
+  "ci_cd": {
+    "automated_testing": true,
+    "test_on_commit": false,
+    "test_on_push": true,
+    "notify_on_failure": true
+  }
+} 
