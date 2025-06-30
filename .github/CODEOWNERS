@@ -1,0 +1,27 @@
+# Archivo CODEOWNERS para el proyecto Termostato ESP8266
+# Define quién es responsable de revisar cambios en diferentes partes del código
+
+# Propietario principal del proyecto
+* @charlie
+
+# Arquitectura hexagonal y tests
+/src/ @charlie
+/tests/ @charlie
+*.ino @charlie
+
+# Configuración de CI/CD
+/.github/ @charlie
+.github/workflows/ @charlie
+.github/dependabot.yml @charlie
+
+# Documentación
+*.md @charlie
+/docs/ @charlie
+
+# Configuración del proyecto
+tests_config.json @charlie
+run_tests.sh @charlie
+
+# Archivos de configuración
+.gitignore @charlie
+LICENSE @charlie 

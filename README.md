@@ -11,6 +11,8 @@ El proyecto ha sido refactorizado siguiendo principios de **Clean Code** y **Sep
 ```
 termostato/
 ├── termostato_refactorizado.ino    # Archivo principal (versión limpia)
+├── termostato_hexagonal.ino        # Versión con arquitectura hexagonal
+├── termostato_tests.ino            # Suite de tests unitarios
 ├── termostato.ino                  # Código original (legacy)
 ├── config.h                        # Configuración centralizada
 ├── ThermostatState.h               # Definición de estados
@@ -18,6 +20,19 @@ termostato/
 ├── HttpClient.h/.cpp               # Operaciones HTTP/HTTPS
 ├── TemperatureController.h/.cpp    # Lógica de control de temperatura
 ├── ThermostatStateMachine.h/.cpp   # Máquina de estados principal
+├── src/                            # Arquitectura hexagonal
+│   ├── domain/                     # Lógica de negocio
+│   ├── application/                # Casos de uso
+│   ├── infrastructure/             # Adaptadores externos
+│   └── interfaces/                 # Controladores
+├── tests/                          # Tests unitarios
+│   ├── TestFramework.h             # Framework de testing
+│   ├── mocks/                      # Mocks para testing
+│   ├── domain/                     # Tests de dominio
+│   ├── application/                # Tests de aplicación
+│   └── infrastructure/             # Tests de infraestructura
+├── run_tests.sh                    # Script para ejecutar tests
+├── tests_config.json               # Configuración de tests
 ├── README.md                       # Documentación
 ├── LICENSE                         # Licencia MIT
 └── .gitignore                      # Archivos a ignorar
@@ -216,4 +231,75 @@ Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para
 
 ## 👨‍💻 Autor
 
-Desarrollado para control de temperatura inteligente con ESP8266, aplicando principios de Clean Code y arquitectura modular. 
+Desarrollado para control de temperatura inteligente con ESP8266, aplicando principios de Clean Code y arquitectura modular.
+
+## 🧪 Tests Unitarios
+
+El proyecto incluye una suite completa de tests unitarios organizados por capas de la arquitectura hexagonal.
+
+### 🎯 Cobertura de Tests
+
+- ✅ **Domain Layer**: Tests de lógica de negocio (100%)
+- ✅ **Application Layer**: Tests de casos de uso (100%)
+- ✅ **Infrastructure Layer**: Tests de adaptadores (JSON parser)
+- 🔄 **Interfaces Layer**: Tests de controladores (pendiente)
+
+### 🚀 Ejecutar Tests
+
+#### Opción 1: Arduino IDE
+1. Abrir `termostato_tests.ino` en Arduino IDE
+2. Compilar y subir al ESP8266
+3. Abrir Monitor Serial (115200 baud)
+4. Los tests se ejecutarán automáticamente
+
+#### Opción 2: Script Automatizado
+```bash
+# Ejecutar todos los tests
+./run_tests.sh
+
+# Solo compilar
+./run_tests.sh -c
+
+# Solo subir (asume compilado)
+./run_tests.sh -u
+
+# Solo ejecutar tests (asume subido)
+./run_tests.sh -t
+
+# Usar puerto específico
+./run_tests.sh -p /dev/ttyUSB1
+```
+
+### 📊 Ejemplo de Output
+
+```
+==================================================
+🧪 TEST SUITE: TemperatureController Tests
+==================================================
+🔍 Running test: Evaluate Temperature - Critical Low ... ✅ PASSED
+🔍 Running test: Evaluate Temperature - Low ... ✅ PASSED
+🔍 Running test: Evaluate Temperature - Medium ... ✅ PASSED
+🔍 Running test: Evaluate Temperature - High ... ✅ PASSED
+🔍 Running test: Get Temperature Range Description ... ✅ PASSED
+==================================================
+📊 TEST RESULTS:
+Total Tests: 5
+✅ Passed: 5
+❌ Failed: 0
+🎉 ALL TESTS PASSED!
+==================================================
+```
+
+### 🎭 Mocks Disponibles
+
+- **MockTemperatureRepository**: Simula API de temperatura
+- **MockTimeRepository**: Simula API de tiempo
+- **MockHardwareRepository**: Simula control de hardware
+
+### 📖 Documentación de Tests
+
+Ver [tests/README.md](tests/README.md) para documentación detallada sobre:
+- Framework de testing
+- Cómo agregar nuevos tests
+- Mejores prácticas
+- Debugging de tests 
